@@ -1,0 +1,35 @@
+{
+  "variables": {
+    "client_id": "",
+    "client_secret": "",
+    "subscription_id": ""
+  },
+  "builders": [{
+    "type": "azure-arm",
+
+    "client_id": "c0dd7d59-b3b6-4f5b-b9d0-c97834c8b186",
+    "client_secret": "b2df7997-4536-435d-b839-3267fe4bca6c",
+    "tenant_id": "4918e021-36db-426e-bc35-e064ff331608",
+    "subscription_id": "1a5cb3ad-7223-4fb6-8af0-84e5e06ede37",
+
+    "os_type": "Linux",
+    "image_publisher": "Canonical",
+    "image_offer": "UbuntuServer",
+    "image_sku": "16.04-LTS",
+
+    "managed_image_resource_group_name": "udacitydemo",
+    "managed_image_name": "linux_june",
+
+    "location": "West US",
+    "vm_size": "Standard_DS2_v2"
+  }],
+  "provisioners": [{
+    "inline": [
+        "apt-get update",
+        "apt-get upgrade -y"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell",
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
+  }]
+}
