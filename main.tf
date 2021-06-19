@@ -32,13 +32,30 @@ resource "azurerm_network_interface" "main" {
     private_ip_address_allocation = "Dynamic"
   }
 }
+# Security group to deny inbound traffic from Internet
+resource "azurerm_network_security_group" "tf-guide-sg" {
+  name                = "${var.prefix}-sg"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
 
+  security_rule {
+    name                       = "DenyInternetInBound"
+    priority                   = 102
+    direction                  = "Inbound"
+    access                     = "deny"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "Internet"
+    destination_address_prefix = "VirtualNetwork"
+  }
+}  
 resource "azurerm_linux_virtual_machine" "main" {
   name                            = "${var.prefix}-vm"
   resource_group_name             = azurerm_resource_group.main.name
   location                        = azurerm_resource_group.main.location
   size                            = "Standard_D2s_v3"
-  admin_username                  = "shruthi.setty@oulook.com"
+  admin_username                  = "${var.username}"
   admin_password                  = "${var.password}"
   disable_password_authentication = false
   network_interface_ids = [
