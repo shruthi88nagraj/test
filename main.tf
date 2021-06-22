@@ -51,6 +51,7 @@ resource "azurerm_network_security_group" "tf-guide-sg" {
   }
 }  
 resource "azurerm_linux_virtual_machine" "main" {
+  count                           = "${var.count}"
   name                            = "${var.prefix}-vm"
   resource_group_name             = azurerm_resource_group.main.name
   location                        = azurerm_resource_group.main.location
@@ -74,3 +75,4 @@ resource "azurerm_linux_virtual_machine" "main" {
     caching              = "ReadWrite"
   }
 }
+
