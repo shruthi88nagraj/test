@@ -8,7 +8,20 @@ variable "location" {
   default = "WestUS"
 }
 
+variable "count" { 
+   description = "Number of VM instances"  
+  default = "2"
+}
+
 variable "VM_user_names" {
  description = "Create VM's with these user names"
- default = ["UdacityVm1", "UdacityVm2", "UdacityVm3"]
+ default = ["UdacityVm1", "UdacityVm2"]
+}
+
+variable "username" {
+  description = "Username"
+}
+
+variable "password" {
+  description = "user password"
 }
