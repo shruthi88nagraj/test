@@ -1,0 +1,39 @@
+{
+  "properties": {
+    "displayName": "Deny-resource-without-tag",
+    "policyType": "Custom",
+    "mode": "All",
+    "description": "This policy denies all the resources with no tag assigned to them.",
+    "metadata": {
+      "createdBy": "0f20b0ac-f241-40a9-b62b-8be76a04d1cc",
+      "createdOn": "2021-06-23T22:20:19.710993Z",
+      "updatedBy": null,
+      "updatedOn": null
+    },
+    "parameters": {
+      "tagName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "webserver-env",
+          "description": "obligatory tag for all resources."
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allof": [
+          {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "exists": "false"
+          }
+        ]
+      },
+      "then": {
+        "effect": "deny"
+      }
+    }
+  },
+  "id": "/subscriptions/1a5cb3ad-7223-4fb6-8af0-84e5e06ede37/providers/Microsoft.Authorization/policyDefinitions/49f5ad04-7ac7-403c-bf85-e8781b97a24e",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "name": "49f5ad04-7ac7-403c-bf85-e8781b97a24e"
+}
