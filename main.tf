@@ -36,6 +36,7 @@ resource "azurerm_network_interface" "main" {
   }
 }
 resource "azurerm_managed_disk" "main" {
+  count                   = "${var.countVm}"
   name                    = "${var.prefix}-md"
   location                = "${var.location}"
   resource_group_name     = azurerm_resource_group.main.name
@@ -73,7 +74,8 @@ resource "azurerm_network_interface_security_group_association" "main" {
 }
 
 resource "azurerm_public_ip" "main" {
-  name           = "${var.prefix}-PublicIp"
+  count                   = "${var.countVm}"
+  name                    = "${var.prefix}-PublicIp"
   resource_group_name     = azurerm_resource_group.main.name
   location                = "${var.location}"
   allocation_method       = "Static"
@@ -100,8 +102,9 @@ resource "azurerm_lb_backend_address_pool" "main" {
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "main"{
-  network_interface_id =    azurerm_network_interface.main.id
-  ip_configuration_name    ="UdProConfiguration"
+  count                    = "${var.countVm}"
+  network_interface_id     = azurerm_network_interface.main.id
+  ip_configuration_name    = "UdProConfiguration"
   backend_address_pool_id  = azurerm_lb_backend_address_pool.main.id
 }
 
