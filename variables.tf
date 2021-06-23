@@ -8,7 +8,7 @@ variable "location" {
   default = "WestUS"
 }
 
-variable "count" { 
+variable "countVm" { 
    description = "Number of VM instances"  
   default = "2"
 }
@@ -24,4 +24,9 @@ variable "username" {
 
 variable "password" {
   description = "user password"
+}
+
+variable "rg_tag" {
+  description = "Adding resource group tag name as Project name"
+  default = "UdacityProject1"
 }
