@@ -17,7 +17,7 @@
     "image_offer": "UbuntuServer",
     "image_sku": "18.04-LTS",
 
-    "managed_image_resource_group_name": "Udacityproject1",
+    "managed_image_resource_group_name": "Udacityproject2",
     "managed_image_name": "linux_june",
 
     "location": "West US",
