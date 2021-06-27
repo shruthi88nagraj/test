@@ -1,6 +1,6 @@
 variable "prefix" {
   description = "The prefix which should be used for all resources in this example"
-  default = "UdacityProject1"
+  default = "UdacityProject2"
 }
 
 variable "location" {
@@ -9,7 +9,7 @@ variable "location" {
 }
 
 variable "countVm" { 
-   description = "Number of VM instances"  
+  description = "Number of VM instances"  
   default = "2"
 }
 
@@ -28,5 +28,5 @@ variable "password" {
 
 variable "rg_tag" {
   description = "Adding resource group tag name as Project name"
-  default = "UdacityProject1"
+  default = "UdacityProject2"
 }
