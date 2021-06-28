@@ -1,6 +1,6 @@
 variable "prefix" {
   description = "The prefix which should be used for all resources in this example"
-  default = "UdacityProject2"
+  default = "UdacityProject1"
 }
 
 variable "location" {
@@ -9,7 +9,7 @@ variable "location" {
 }
 
 variable "countVm" { 
-  description = "Number of VM instances"  
+   description = "Number of VM instances"  
   default = "2"
 }
 
@@ -28,5 +28,10 @@ variable "password" {
 
 variable "rg_tag" {
   description = "Adding resource group tag name as Project name"
-  default = "UdacityProject2"
+  default = "UdacityProject1"
+}
+
+variable "imageID"{
+  description = "Image ID of Virtual machines created by Packer"
+  default = "/subscriptions/1a5cb3ad-7223-4fb6-8af0-84e5e06ede37/resourceGroups/UdacityProject2/providers/Microsoft.Compute/images/UdacityPackerImage"
 }
