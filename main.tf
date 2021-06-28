@@ -15,13 +15,28 @@ resource "azurerm_virtual_network" "main" {
   address_space       = ["10.0.0.0/22"]
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
+  tags = {
+    environment = "UdacityProject2"
+  }
 }
 
-resource "azurerm_subnet" "internal" {
-  name                 = "internal"
+resource "azurerm_subnet" "main" {
+  name                 = "${var.prefix}-subnet"
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
   address_prefixes     = ["10.0.2.0/24"]
+  
+}
+
+resource "azurerm_public_ip" "main" {
+  count                   = "${var.countVm}"
+  name                    = "${var.prefix}-Public-ip"
+  resource_group_name     = azurerm_resource_group.main.name
+  location                = azurerm_resource_group.main.location
+  allocation_method       = "Static"
+  tags = {
+    environment = "UdacityProject2"
+  }
 }
 
 resource "azurerm_network_interface" "main" {
@@ -31,8 +46,11 @@ resource "azurerm_network_interface" "main" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.internal.id
+    subnet_id                     = azurerm_subnet.main.id
     private_ip_address_allocation = "Dynamic"
+  }
+  tags = {
+    environment = "UdacityProject2"
   }
 }
 resource "azurerm_managed_disk" "main" {
@@ -45,7 +63,7 @@ resource "azurerm_managed_disk" "main" {
   disk_size_gb            = "1"
 
   tags = {
-    environment = "UdacityProject1"
+    environment = "UdacityProject2"
   }
 }
 
@@ -66,46 +84,48 @@ resource "azurerm_network_security_group" "main" {
     source_address_prefix      = "Internet"
     destination_address_prefix = "VirtualNetwork"
   }
+  tags = {
+    environment = "UdacityProject2"
+  }
 }  
 resource "azurerm_network_interface_security_group_association" "main" {
   count                          = "${var.countVm}"
   network_interface_id =    azurerm_network_interface.main.id
   network_security_group_id      = azurerm_network_security_group.main.id
+  
 }
 
-resource "azurerm_public_ip" "main" {
-  count                   = "${var.countVm}"
-  name                    = "${var.prefix}-PublicIp"
-  resource_group_name     = azurerm_resource_group.main.name
-  location                = "${var.location}"
-  allocation_method       = "Static"
-  tags = {
-    environment = "UdacityProject1"
-  }
-}
+
 
 resource "azurerm_lb" "main" {
+  count                   = "${var.countVm}"
   name                = "${var.prefix}-lb"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
   frontend_ip_configuration {
-    name                 = "primary"
-    public_ip_address_id = azurerm_public_ip.main.id
+    name                 = "PublicIPAddress"
+    public_ip_address_id = azurerm_public_ip.main[count.index].id
+  }
+  tags = {
+    environment = "UdacityProject2"
   }
 }
 
 resource "azurerm_lb_backend_address_pool" "main" {
+  count                   = "${var.countVm}"
   resource_group_name             = azurerm_resource_group.main.name
-  loadbalancer_id                 = azurerm_lb.main.id
+  loadbalancer_id                 = azurerm_lb.main[count.index].id
   name                            = "${var.prefix}-lbBackendpool"
+  
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "main"{
   count                    = "${var.countVm}"
   network_interface_id     = azurerm_network_interface.main.id
   ip_configuration_name    = "UdProConfiguration"
-  backend_address_pool_id  = azurerm_lb_backend_address_pool.main.id
+  backend_address_pool_id  = azurerm_lb_backend_address_pool.main[count.index].id
+  
 }
 
 resource "azurerm_linux_virtual_machine" "main" {
@@ -120,12 +140,8 @@ resource "azurerm_linux_virtual_machine" "main" {
   network_interface_ids = [
     azurerm_network_interface.main.id,
   ]
-
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
+  storage_image_reference{
+    id = "${var.imageID}"
   }
 
   os_disk {
@@ -133,7 +149,19 @@ resource "azurerm_linux_virtual_machine" "main" {
     caching              = "ReadWrite"
   }
   tags = {
-    environment = "UdacityProject1"
+    environment = "UdacityProject2"
   }
 }
+resource "azurerm_lb_probe" "main" {
+  count                           = "${var.countVm}"
+  resource_group_name = azurerm_resource_group.main.name
+  loadbalancer_id     = azurerm_lb.main[count.index].id
+  name                = "ssh-running-probe"
+  port                = "80"
+  
+}
+
+
+
+
 
